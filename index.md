@@ -14,3 +14,5 @@ The above video demo is a short clip of using the allolib_playground library, us
 [![Flute Demo Video](https://img.youtube.com/vi/ID_HERE/0.jpg)](https://www.youtube.com/watch?v=ID_HERE) <br/>
 (Click the image above to go to the video)<br/>
 [GitHub Files]
+
+The goal of this project was to explore instrument synthesis techniques. I started by simply looking at all of the instruments in the tutorial/synthesis folder of allolib_playground while doing some research on how each of those respective synthesis techniques works. I chose two synthesis techniques that I found sounded good. Before combining the two I had no plan to simulate a specific instrument. However, for the third project, I wanted a sound that would work well to give me a mix of "unsettling" and "calming" sounds and I thought the flute would be the best for that. Once I combined AM and Sine wave synthesis, I played around with the ADSR values of my new instrument till it produced those "unsettling" and "calming" sounds.
