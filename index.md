@@ -1,8 +1,8 @@
 # Notes - Aman Desai
 Table of Contents:
-* [Project 1 - Mary Had a Little Lamb](#Project 1 - Simple Melody)
-* [Project 2 - Flute Synthesis]
-* [Project 3 - Boid Simulation in Allolib]
+* [Project 1 - Mary Had a Little Lamb](##project-1---simple-melody)
+* [Project 2 - Flute Synthesis](#project-2---instrument-synthesis)
+* [Project 3 - Boid Simulation in Allolib](#project-3---personal-choice-project)
 
 ## Project 1 - Simple Melody
 
