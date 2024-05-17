@@ -17,7 +17,7 @@ The above video demo is a short clip of using the allolib_playground library, us
 
 ### Flute Synthesis
 [![Flute Demo Video](https://img.youtube.com/vi/ID_HERE/0.jpg)](https://www.youtube.com/watch?v=ID_HERE) <br/>
-[![Flute Demo Video](https://img.youtube.com/vi/ID_HERE/0.jpg)](https://www.youtube.com/watch?v=ID_HERE) <br/>
+[![Flute My Melody](https://img.youtube.com/vi/ID_HERE/0.jpg)](https://www.youtube.com/watch?v=ID_HERE) <br/>
 (Click the images above to go to the respective videos)<br/>
 [GitHub Files](https://github.com/allolib-s24/notes-amanpdesai/tree/main/AMandSineSynth)
 
