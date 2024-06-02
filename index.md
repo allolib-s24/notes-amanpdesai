@@ -50,7 +50,7 @@ Finally, for the actual implementation of the PositionedVoice object: there were
 &nbsp;&nbsp;&nbsp;&nbsp;2. Direct Boid Voice Implementation<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method limits us in terms of compute power as we have to keep the number of boids in the simulation lower. Voices are created at the boid positions. Additionally, the voices follow their boid around meaning that every iteration the voice emits the boid's frequency and moves to the boid's position.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;In both cases, we use the random float/double number generators to give the effect of a chorus/group of voices as when I had fixed values, the sound simply sounded like one voice coming from the center of mass of all of the boids (I am not an expert when it comes to sound synthesis so this may not be right but I assumed it was because the sine wave we were outputting was the exact same and the same sine waves layered over one another with very slightly different frequencies made all of the voices sound like one).<br/><br/>
-I ended up with four files each using the same external files. Here is what each file is and what it showcases:<br/>
+I ended up with four files each using the same external files. Here is what each file is and what it showcases:<br/><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1. [noSoundBoids.cpp](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/noSoundBoids.cpp)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is exactly what it seems. It is the boid simulation without any sound aspect to it.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2. [soundTrial0.cpp](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial0.cpp)<br/>
