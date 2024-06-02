@@ -29,11 +29,12 @@ The first video linked is a simple demo of the instrument I created, playing eac
 
 ## Boid Simulation in Allolib
 &nbsp;&nbsp;&nbsp;&nbsp;For my final project, I decided to try and implement a boid simulation in 3D space, integrating with it different boid flocking behaviors, types of boids, and most importantly, sound. The code I started with is from Ryan which sets up an environment and a boid system already. Here is the link to it in case you want to see the original code: [Original Boid Code From Ryan](https://github.com/kr4g/MAT201B-2024-ryan-millett/tree/main/boids). Ryan's code gave me a good starting point as instead of having to fully understand and implement everything about boids from scratch using the Allolib Library, I could start with a boid system that had the basics coded already.<br/>
-After doing some looking online for pre-existing boid systems for inspiration, here is one that I really loved and tried to inherit from:
+&nbsp;&nbsp;&nbsp;&nbsp;After doing some looking online for pre-existing boid systems for inspiration, here is one that I really loved and tried to inherit from:
 [![Zachhi FlockingBoids Project](https://github.com/Zachhi/FlockingBoids-VS/raw/master/boidsDemo.gif)](https://github.com/Zachhi/FlockingBoids-Windows-Linux/tree/master) <br/>
   A few things I wanted to try and implement that the code above did really well were the different types of flocking and the predator-prey interactions. I was able to implement three of my own "species" as I like to call them, represented by three different colored boids:<br/>
 * Blue Boids: Average moving speed, Average separation, Average cohesion, Average Alignment, Average turn rate.
 * Yellow Boids: Fast moving speed, High separation, Average cohesion, High Alignment, High turn rate.
 * White Boids: Slow moving speed, Average separation, Average cohesion, Low Alignment, Low turn rate.
-Because of a lack of time, I wasn't able to implement a predator-prey interaction but I probably will soon just for fun.<br/>
+Because of a lack of time, I wasn't able to implement a predator-prey interaction but I probably will soon just for fun.
+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;The sounds were the most complicated part of the project by far. 
