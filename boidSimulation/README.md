@@ -6,3 +6,4 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file showcases the Oct Tree Implementation for the voices of the boids. It has all of the species of boids and the full number of boids. The voice objects are at fixed positions but update their frequencies based on which boids are in their radius.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;4. [soundTrial2.cpp]()<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file showcases the Direct Boid Voice Implementation for the voices of the boids. It has all of the species of boids and a small number of boids. The voice objects follow their respective boids around the 3D space and emit only one boids frequency.<br/><br/>
+To implement/run this code, simply download the whole folder, place it into the allolib_playground directory, and use ./run.sh path_to_files to run the code.
