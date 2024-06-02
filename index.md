@@ -51,13 +51,13 @@ Finally, for the actual implementation of the PositionedVoice object: there were
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method limits us in terms of compute power as we have to keep the number of boids in the simulation lower. Voices are created at the boid positions. Additionally, the voices follow their boid around meaning that every iteration the voice emits the boid's frequency and moves to the boid's position.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;In both cases, we use the random float/double number generators to give the effect of a chorus/group of voices as when I had fixed values, the sound simply sounded like one voice coming from the center of mass of all of the boids (I am not an expert when it comes to sound synthesis so this may not be right but I assumed it was because the sine wave we were outputting was the exact same and the same sine waves layered over one another with very slightly different frequencies made all of the voices sound like one).<br/><br/>
 I ended up with four files each using the same external files. Here is what each file is and what it showcases:<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1. [noSoundBoids.cpp]()<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1. [noSoundBoids.cpp](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/noSoundBoids.cpp)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is exactly what it seems. It is the boid simulation without any sound aspect to it.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2. [soundTrial0.cpp]()<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2. [soundTrial0.cpp](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial0.cpp)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is a single boid flying around 3D space with random movement. It has one main purpose: to show the effect of the Positioned Voice in 3D space as it flies around. There is only one species of boid and the size of the 3D space is reduced to keep the boid flying closer to the camera.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3. [soundTrial1.cpp]()<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3. [soundTrial1.cpp](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial1.cpp)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file showcases the Oct Tree Implementation for the voices of the boids. It has all of the species of boids and the full number of boids. The voice objects are at fixed positions but update their frequencies based on which boids are in their radius.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;4. [soundTrial2.cpp]()<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4. [soundTrial2.cpp](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial2.cpp)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file showcases the Direct Boid Voice Implementation for the voices of the boids. It has all of the species of boids and a small number of boids. The voice objects follow their respective boids around the 3D space and emit only one boids frequency.<br/><br/>
 
 Here is the link to my presentation about my code:<br/>
