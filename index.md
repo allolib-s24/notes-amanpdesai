@@ -53,7 +53,7 @@ Finally, for the actual implementation of the PositionedVoice object: there were
 I ended up with four files each using the same external files. Here is what each file is and what it showcases:<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;1. noSoundBoids.cpp <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is exactly what it seems. It is the boid simulation without any sound aspect to it.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Video Demo](https://youtu.be/n_Nih4F-f7yKQ) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Video Demo](https://youtu.be/Nih4F-f7yKQ) <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Github Link](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/noSoundBoids.cpp)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;2. soundTrial0.cpp <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file is a single boid flying around 3D space with random movement. It has one main purpose: to show the effect of the Positioned Voice in 3D space as it flies around. There is only one species of boid and the size of the 3D space is reduced to keep the boid flying closer to the camera.<br/>
