@@ -61,10 +61,12 @@ I ended up with four files each using the same external files. Here is what each
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Github Link](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial0.cpp)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;3. soundTrial1.cpp <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file showcases the Oct Tree Implementation for the voices of the boids. It has all of the species of boids and the full number of boids. The voice objects are at fixed positions but update their frequencies based on which boids are in their radius.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Video Demo](https://www.youtube.com/watch?v=Nih4F-f7yKQ) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Video Demo](https://youtu.be/rvoQkzg1v9w) <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Github Link](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial1.cpp)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;4. [soundTrial2.cpp](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial2.cpp) <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file showcases the Direct Boid Voice Implementation for the voices of the boids. It has all of the species of boids and a small number of boids. The voice objects follow their respective boids around the 3D space and emit only one boids frequency.<br/><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4. soundTrial2.cpp <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This file showcases the Direct Boid Voice Implementation for the voices of the boids. It has all of the species of boids and a small number of boids. The voice objects follow their respective boids around the 3D space and emit only one boids frequency.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Video Demo](https://youtu.be/N2ih-cQ36kA) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Github Link](https://github.com/allolib-s24/notes-amanpdesai/blob/main/boidSimulation/boids/soundTrial2.cpp)<br><br/>
 
 [GitHub Files](https://github.com/allolib-s24/notes-amanpdesai/tree/main/boidSimulation)
 <br/><br/>
