@@ -19,7 +19,9 @@
 #include "al/scene/al_SynthSequencer.hpp"
 #include "al/sound/al_Ambisonics.hpp"
 #include "al/sound/al_Dbap.hpp"
+#include "al/sound/al_Lbap.hpp"
 #include "al/sound/al_StereoPanner.hpp"
+#include "al/sphere/al_AlloSphereSpeakerLayout.hpp"
 #include "al/sound/al_Vbap.hpp"
 #include "al/ui/al_Parameter.hpp"
 #include "al/ui/al_PresetSequencer.hpp"
@@ -44,7 +46,7 @@ const int N_PARTICLES = 1500;
 gam::ArrayPow2<float>
 tbSin(2048), tbSqr(2048), tbPls(2048), tbDin(2048);
 
-#define SpatializerType StereoPanner
+// #define Lbap StereoPanner
 using namespace al;
 typedef vector<double> Point;
 
@@ -427,12 +429,12 @@ struct MyApp : DistributedAppWithState<CommonState> {
         i++;
       }
       boidCenterOfMass /= boids.size();
-      cout << "Number of voices: " << voices.size() << endl;
+      //cout << "Number of voices: " << voices.size() << endl;
       int count = 1;
       for (auto& voice : voices){
         boidTree->queryRegion(voice.getPos(), Vec3f(N_CENTER_RAD), voice.i_boids);
         voice.updateFreq(boids);
-        cout << "Voice " << count << " : " << voice.mOsc.freq() << endl;
+        //cout << "Voice " << count << " : " << voice.mOsc.freq() << endl;
         count++;
       }
       nav().faceToward(boidCenterOfMass, Vec3d(0, 1, 0), 0.2);
@@ -583,7 +585,9 @@ struct MyApp : DistributedAppWithState<CommonState> {
       auto guiDomain = GUIDomain::enableGUI(defaultWindowDomain());
       auto &gui = guiDomain->newGUI();
       auto speakers = StereoSpeakerLayout();
-      scene.setSpatializer<SpatializerType>(speakers);
+      // auto speakers = AlloSphereSpeakerLayout();
+      scene.setSpatializer<StereoPanner>(speakers);
+      // scene.setSpatializer<Lbap>(speakers);
       addDodecahedron(voiceMesh);
       scene.setDefaultUserData(&voiceMesh);
       gam::addWave(tbSin, gam::SINE);
