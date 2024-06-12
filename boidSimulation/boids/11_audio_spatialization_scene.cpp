@@ -41,6 +41,7 @@ using namespace al;
 
 //
 class MyAgent : public PositionedVoice {
+  Vec3d myPos;
 public:
   MyAgent() {
     mEnvelope.lengths(5.0f, 5.0f);
@@ -82,6 +83,9 @@ public:
     mSize = size;
     mSource.freq(frequency);
     mLifeSpan = lifeSpanFrames;
+    myPos.x = x;
+    myPos.y = y;
+    myPos.z = z;
   }
 
   // No get or set ParamFields functions as this system is not made to
@@ -91,6 +95,10 @@ public:
     // We want to reset the envelope:
     mEnvelope.reset();
     mModulator.phase(-0.1); // reset the phase
+  }
+
+  Vec3d &getPos(){
+    return myPos;
   }
 
   // No need for onTriggerOff() function as duration of agent's life is fixed
@@ -131,7 +139,7 @@ struct MyApp : public App {
     initSpeakers();
     initSpatializer();
     // Configure spatializer for the scene
-    
+
     scene.setSpatializer<SpatializerType>(speakerLayout);
 
     // You can set how distance attenuattion for audio is handled
@@ -230,7 +238,7 @@ struct MyApp : public App {
           graphicsDomain()->fps() * randomGenerator.uniform(8.0, 20.0);
       voice->set(position.x, position.y, position.z - 1, // Place it in front
                  size, frequency, lifespan);
-      voices.push_back(voice);
+      voices.push_back(*voice);
       scene.triggerOn(voice);
     }
     return true;
