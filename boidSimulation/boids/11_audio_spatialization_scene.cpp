@@ -7,7 +7,8 @@
 #include "al/graphics/al_Shapes.hpp"
 #include "al/io/al_Imgui.hpp"
 #include "al/math/al_Random.hpp"
-#include "al/scene/al_DynamicScene.hpp"
+// #include "al/scene/al_DynamicScene.hpp"
+#include "al/scene/al_DistributedScene.hpp"
 #include "al/scene/al_SynthSequencer.hpp"
 #include "al/sound/al_Ambisonics.hpp"
 #include "al/sound/al_Dbap.hpp"
@@ -49,6 +50,10 @@ public:
     mEnvelope.levels(0, 1, 0);
     mEnvelope.sustainPoint(1);
     mModulator.freq(1.9);
+  }
+
+  void init() override {
+    registerParameter(parameterPose());
   }
 
   void onProcess(AudioIOData &io) override {
@@ -121,7 +126,7 @@ struct MyApp : public DistributedApp {
   std::vector<MyAgent> voices;
   rnd::Random<> randomGenerator; // Random number generator
 
-  DynamicScene scene;
+  DistributedScene scene{TimeMasterMode::TIME_MASTER_GRAPHICS};
 
   void initSpeakers(){
     speakerLayout = AlloSphereSpeakerLayout();
@@ -157,11 +162,14 @@ struct MyApp : public DistributedApp {
   }
 
   virtual void onCreate() override {
+    registerDynamicScene(scene);
     navControl().active(true);
     imguiInit();
+
   }
 
   void onAnimate(double dt) override {
+    scene.update(dt);
     SynthVoice *voices = scene.getActiveVoices();
     int count = 0;
     while (voices) {
@@ -209,7 +217,8 @@ struct MyApp : public DistributedApp {
     scene.listenerPose(nav()); // Update listener pose to current nav
     scene.render(g);
 
-    imguiDraw();
+    if(isPrimary())
+      imguiDraw();
   }
 
   virtual void onSound(AudioIOData &io) override {
