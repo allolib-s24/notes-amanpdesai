@@ -2,7 +2,8 @@
 #include "Gamma/Domain.h"
 #include "Gamma/Envelope.h"
 #include "Gamma/Oscillator.h"
-#include "al/app/al_App.hpp"
+// #include "al/app/al_App.hpp"
+#include "al/app/al_DistributedApp.hpp"
 #include "al/graphics/al_Shapes.hpp"
 #include "al/io/al_Imgui.hpp"
 #include "al/math/al_Random.hpp"
@@ -113,7 +114,7 @@ public:
   float mModulatorValue;  // To share modulator value from audio to graphics
 };
 
-struct MyApp : public App {
+struct MyApp : public DistributedApp {
   Mesh mesh;
   Spatializer* spatializer{nullptr};
   Speakers speakerLayout;
