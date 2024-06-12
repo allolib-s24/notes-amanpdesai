@@ -31,7 +31,7 @@
 #include <string>
 // #include "classes/boid_4.cpp"
 
-const int CUBE_SIZE = 3;
+const int CUBE_SIZE = 5;
 const int N_CENTERS = 2; //realistically this is 8^N number of centers
 const float N_CENTER_RAD = 20.0 / pow(2.0, N_CENTERS);
 
@@ -165,8 +165,8 @@ public:
       mAmpEnv.lengths()[0] = rand_double(0.1, 0.03);
       mAmpEnv.lengths()[2] = rand_double(1.7, 0.05);
       mPan.pos(-1.0);
-      float amp = rand_float(0.015, 0.01);
-      float amRatio = 2.0;
+      float amp = 0.015;//rand_float(0.015, 0.01);
+      float amRatio = rand_float(2.0, 0.05);
       while (io()) {
         mAMValue = mAM();
         mAM.freq(mOsc.freq()*amRatio);            // set AM freq according to ratio
@@ -249,6 +249,9 @@ public:
 
   void updatePos(float x, float y, float z){
     setPose(Pose({x, y, z}));
+    myPos.x = x;
+    myPos.y = y;
+    myPos.z = z;
   }
 
   Vec3d &getPos(){
@@ -302,7 +305,7 @@ struct MyApp : DistributedAppWithState<CommonState> {
 
     // place the camera so that we can see the axes
     initDist = al::dist(nav().pos(), Vec3d(0, 0, 0));
-    nav().pos(Vec3f(5.0, 0.0, 0.0));
+    nav().pos(Vec3f(0.0, 0.0, 0.0));
     nav().faceToward(Vec3d(0, 0, 0), Vec3d(0, 1, 0));
 
     // Don't do this:
@@ -323,6 +326,9 @@ struct MyApp : DistributedAppWithState<CommonState> {
 		DBMesh.color(0.08, 0.08, 0.60);
 		DBMesh.vertex(0, 1, 0);         // Top center edge, closing the fan
 		DBMesh.color(0.45, 0.17, 0.28);
+
+    addDodecahedron(voiceMesh);
+    voiceMesh.color(124,252,0);
 
     setUp();
   } 
@@ -370,7 +376,9 @@ struct MyApp : DistributedAppWithState<CommonState> {
         }
         updateRandDir++;
         b.updatePosition(dt);
-        voices[b.voice_idx].updatePos(b.bNav.x(), b.bNav.y(), b.bNav.z());
+        voices[b.voice_idx].updatePos(b.bNav.pos().x, b.bNav.pos().y, b.bNav.pos().z);
+        //cout << "Voice Pos: " << voices[b.voice_idx].pose() << endl;
+        //cout << "Boid Pos: " << b.bNav.pos() << endl;
 
         state().boid[i].set(b.bNav);
         i++;

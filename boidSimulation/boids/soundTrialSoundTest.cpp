@@ -21,6 +21,8 @@
 #include "al/sound/al_Dbap.hpp"
 #include "al/sound/al_StereoPanner.hpp"
 #include "al/sound/al_Vbap.hpp"
+#include "al/sound/al_Lbap.hpp"
+#include "al/sphere/al_AlloSphereSpeakerLayout.hpp"
 #include "al/ui/al_Parameter.hpp"
 #include "al/ui/al_PresetSequencer.hpp"
 #include "al_ext/statedistribution/al_CuttleboneDomain.hpp"
@@ -31,11 +33,11 @@
 #include <string>
 // #include "classes/boid_4.cpp"
 
-const int CUBE_SIZE = 5;
+const int CUBE_SIZE = 20;
 const int N_CENTERS = 2; //realistically this is 8^N number of centers
 const float N_CENTER_RAD = 20.0 / pow(2.0, N_CENTERS);
 
-const int MAX_BOIDS = 10;
+const int MAX_BOIDS = 2000;
 const int NEIGHBOR_LIMIT = 100;
 // const float MAX_BOID_RADIUS = CUBE_SIZE * 0.1;
 
@@ -159,13 +161,13 @@ public:
     mAMEnv.levels(0,1,1,0);
     mAMEnv.lengths(5.0f, 5.0f);
   }
-
+  //bring this back here if it doesnt work. We moved it to the onSound() for MyApp
   void onProcess(AudioIOData &io) override {
     if (!isnan(mOsc.freq())){
       mAmpEnv.lengths()[0] = rand_double(0.1, 0.03);
       mAmpEnv.lengths()[2] = rand_double(1.7, 0.05);
       mPan.pos(-1.0);
-      float amp = 0.015;//rand_float(0.015, 0.01);
+      float amp = 0.0015;//rand_float(0.015, 0.01);
       float amRatio = rand_float(2.0, 0.05);
       while (io()) {
         mAMValue = mAM();
@@ -247,10 +249,6 @@ public:
     }
   }
 
-  void updatePos(float x, float y, float z){
-    setPose(Pose({x, y, z}));
-  }
-
   Vec3d &getPos(){
     return myPos;
   }
@@ -267,6 +265,22 @@ struct MyApp : DistributedAppWithState<CommonState> {
   Parameter DBseparationForce{"Dark Blue Separation Force", "", 0.65, 0.0, 1.0};
   Parameter DBalignmentForce{"Dark Blue Alignment Force", "", 0.8, 0.0, 1.0};
   Parameter DBturnRate{"Dark Blue Turn Rate", "", 0.3, 0.0001, 1.0};
+
+  Parameter YbRadius{"Yellow Boid Vision Radius", "", 0.7, 0.05, 1.5};
+  Parameter YcohesionForce{"Yellow Cohesion Force", "", 0.625, 0.0, 1.0};
+  Parameter YseparationForce{"Yellow Separation Force", "", 0.75, 0.0, 1.0};
+  Parameter YalignmentForce{"Yellow Alignment Force", "", 1.0, 0.0, 1.0};
+  Parameter YturnRate{"Yellow Turn Rate", "", 0.6, 0.0001, 1.0};
+
+  Parameter WbRadius{"White Boid Vision Radius", "", 0.7, 0.05, 1.5};
+  Parameter WcohesionForce{"White Cohesion Force", "", 0.625, 0.0, 1.0};
+  Parameter WseparationForce{"White Separation Force", "", 0.65, 0.0, 1.0};
+  Parameter WalignmentForce{"White Alignment Force", "", 0.75, 0.0, 1.0};
+  Parameter WturnRate{"White Turn Rate", "", 0.3, 0.0001, 1.0};
+
+  //Sound variables
+  Spatializer* spatializer{nullptr};
+  Speakers speakerLayout;
 
   std::vector<MyAgent> voices;
   std::vector<Boid> boids;    
@@ -285,7 +299,13 @@ struct MyApp : DistributedAppWithState<CommonState> {
   double initDist;
 
   Axes axes;
+  // Mesh predMesh;
   Mesh DBMesh;
+  Mesh YMesh;
+  Mesh WMesh;
+  // Mesh boidMesh;
+  Mesh foodMesh;
+  // Mesh lineMesh{Mesh::LINES};
   Mesh voiceMesh;
 
   rnd::Random<> randomGenerator;
@@ -293,6 +313,18 @@ struct MyApp : DistributedAppWithState<CommonState> {
   // Nav point;
   DynamicScene scene;
   ShaderProgram pointShader;
+
+  void initSpeakers(){
+    speakerLayout = AlloSphereSpeakerLayout();
+  }
+
+  void initSpatializer(){
+    if (spatializer){
+      delete spatializer;
+    }
+    spatializer = new Lbap(speakerLayout);
+    spatializer->compile();
+  }
 
   void onCreate() override {
     pointShader.compile(slurp("../point-vertex.glsl"),
@@ -323,6 +355,32 @@ struct MyApp : DistributedAppWithState<CommonState> {
 		DBMesh.color(0.08, 0.08, 0.60);
 		DBMesh.vertex(0, 1, 0);         // Top center edge, closing the fan
 		DBMesh.color(0.45, 0.17, 0.28);
+
+    // Yellow Boid
+    YMesh.primitive(Mesh::TRIANGLE_FAN);
+		YMesh.vertex(0, 0, -5);      // Nose
+		YMesh.color(0.96, 0.71, 0.02);//(0.6, 1.0, 0.2);
+		YMesh.vertex(0, 0.5, 0);     // Top center edge ("back")
+		YMesh.color(255.0/255.0, 203.0/255.0, 61.0/255.0);
+		YMesh.vertex(-1, 0, 0);      // Left edge
+		YMesh.color(181.0/255.0, 144.0/255.0, 43.0/255.0);
+		YMesh.vertex(1, 0, 0);       // Right edge
+		YMesh.color(181.0/255.0, 144.0/255.0, 43.0/255.0);
+		YMesh.vertex(0, 0.5, 0);     // Top center edge, closing the fan
+		YMesh.color(255.0/255.0, 203.0/255.0, 61.0/255.0);
+
+    // White Boid
+    WMesh.primitive(Mesh::TRIANGLE_FAN);
+		WMesh.vertex(0, 0, -3);      // Nose
+		WMesh.color(1.0, 1.0, 1.0);//(0.6, 1.0, 0.2);
+		WMesh.vertex(0, 1, 0);     // Top center edge ("back")
+		WMesh.color(1.0, 1.0, 1.0);
+		WMesh.vertex(-3, -1, 0);      // Left edge
+		WMesh.color(1.0, 1.0, 1.0);
+		WMesh.vertex(3, -1, 0);       // Right edge
+		WMesh.color(1.0, 1.0, 1.0);
+		WMesh.vertex(0, 1, 0);     // Top center edge, closing the fan
+		WMesh.color(1.0, 1.0, 1.0);
 
     setUp();
   } 
@@ -355,20 +413,46 @@ struct MyApp : DistributedAppWithState<CommonState> {
           cohesionForce = DBcohesionForce.get();
           separationForce = DBseparationForce.get();
           turnRate = DBturnRate.get();
+        }else if (b.getType() == "Y"){
+          bRadius = YbRadius.get();
+          alignmentForce = YalignmentForce.get();
+          cohesionForce = YcohesionForce.get();
+          separationForce = YseparationForce.get();
+          turnRate = YturnRate.get();
+        }else if (b.getType() == "W"){
+          bRadius = WbRadius.get();
+          alignmentForce = WalignmentForce.get();
+          cohesionForce = WcohesionForce.get();
+          separationForce = WseparationForce.get();
+          turnRate = WturnRate.get();
+        }else{
+          bRadius = DBbRadius.get();
+          alignmentForce = DBalignmentForce.get();
+          cohesionForce = DBcohesionForce.get();
+          separationForce = DBseparationForce.get();
+          turnRate = DBturnRate.get();
         }
         boidCenterOfMass += b.bNav.pos();
+        //b.originAvoidance(2.0, 2.0);
         b.handleBoundary(CUBE_SIZE);
 
         boidTree->queryRegion(b.bNav.pos(), Vec3f(bRadius), b.i_boids);
 
         b.boidForces(boids, alignmentForce, cohesionForce, separationForce, turnRate);
         b.updatePosition(dt);
-        voices[b.voice_idx].updatePos(b.bNav.pos().x, b.bNav.pos().y, b.bNav.pos().z);
 
         state().boid[i].set(b.bNav);
         i++;
       }
       boidCenterOfMass /= boids.size();
+      //cout << "Number of voices: " << voices.size() << endl;
+      int count = 1;
+      for (auto& voice : voices){
+        boidTree->queryRegion(voice.getPos(), Vec3f(N_CENTER_RAD), voice.i_boids);
+        voice.updateFreq(boids);
+        //cout << "Voice " << count << " : " << voice.mOsc.freq() << endl;
+        count++;
+      }
       nav().faceToward(boidCenterOfMass, Vec3d(0, 1, 0), 0.2);
       state().pose = nav();
       
@@ -427,24 +511,40 @@ struct MyApp : DistributedAppWithState<CommonState> {
   }
 
   void setUp() {  
-      float delta_freq = 50.0f;       
-      boidTree = new Octree(Vec3f(0, 0, 0), Vec3f(CUBE_SIZE), 0.01f);
+    float delta_freq = 50.0f;       
+    boidTree = new Octree(Vec3f(0, 0, 0), Vec3f(CUBE_SIZE), 0.01f);
 
-      boids.clear();
-      voices.clear();
-      for (int i = 0; i < MAX_BOIDS; ++i) {
-        Boid b;
+    boids.clear();
+    voices.clear();
+    Vec3d boidCenterOfMass(0, 0, 0);
+    for (int i = 0; i < MAX_BOIDS; ++i) {
+      Boid b;
+      if (i < MAX_BOIDS / 4){
+        b.setType("Y");
+        b.speed_percentage = 1.25f;
+        float freq = 485.0f;
+        b.frequency = rand_float(freq, delta_freq);
+      }else if (i < MAX_BOIDS / 2){
+        b.setType("W");
+        b.speed_percentage = 0.5f;
+        float freq = 256.0f;
+        b.frequency = rand_float(freq, delta_freq);
+      }else{
         b.setType("DB");
         b.speed_percentage = 0.75f;
         float freq = 343.0f;
         b.frequency = rand_float(freq, delta_freq);
-        randomize(b.bNav);
-        createVoice(b.bNav.pos().x, b.bNav.pos().y, b.bNav.pos().z, b.frequency);
-        b.voice_idx = voices.size() - 1;
-        state().boid[i] = b.bNav.pos();
-        boids.push_back(b);
       }
-      
+      randomize(b.bNav);
+      boidCenterOfMass += b.bNav.pos();
+      state().boid[i] = b.bNav.pos();
+      boids.push_back(b);
+    }
+    boidCenterOfMass /= boids.size();
+    vector<Point> centers_list = generateCenters(N_CENTERS, CUBE_SIZE);
+    for (const auto& center : centers_list) {
+      createVoice(center[0], center[1], center[2], 256.0);
+    }
   }
 
   void onDraw(Graphics& g) override {
@@ -466,6 +566,10 @@ struct MyApp : DistributedAppWithState<CommonState> {
         );
         if (b.getType() == "DB"){
           g.draw(DBMesh);
+        }else if (b.getType() == "Y"){
+          g.draw(YMesh);
+        }else if (b.getType() == "W"){
+          g.draw(WMesh);
         }
         g.popMatrix();
       }
@@ -481,10 +585,23 @@ struct MyApp : DistributedAppWithState<CommonState> {
   }
 
   void onSound(AudioIOData &io) override{
+    while(io()){
+      
+    }
+    spatializer->prepare(io);
+    for (auto& voice : voices){
+      Vec3d voice_position = voice.getPos();
+      spatializer->renderBuffer(io, voice_position, io.busBuffer(0), io.framesPerBuffer());
+    }
+    spatializer->finalize(io);
     scene.render(io);
   }
 
   void onInit() override {
+    audioIO().channelsBus(1);
+    initSpeakers();
+    initSpatializer();
+
     auto cuttleboneDomain =
         CuttleboneStateSimulationDomain<CommonState>::enableCuttlebone(this);
     
@@ -496,8 +613,9 @@ struct MyApp : DistributedAppWithState<CommonState> {
     if (isPrimary()) {
       auto guiDomain = GUIDomain::enableGUI(defaultWindowDomain());
       auto &gui = guiDomain->newGUI();
-      auto speakers = StereoSpeakerLayout();
-      scene.setSpatializer<SpatializerType>(speakers);
+
+      scene.setSpatializer<SpatializerType>(speakerLayout);
+      
       addDodecahedron(voiceMesh);
       scene.setDefaultUserData(&voiceMesh);
       gam::addWave(tbSin, gam::SINE);
@@ -517,12 +635,23 @@ struct MyApp : DistributedAppWithState<CommonState> {
       gui.add(DBalignmentForce);
       gui.add(DBturnRate);
       gui.add(DBbRadius);
+      gui.add(YcohesionForce);
+      gui.add(YseparationForce);
+      gui.add(YalignmentForce);
+      gui.add(YturnRate);
+      gui.add(YbRadius);
+      gui.add(WcohesionForce);
+      gui.add(WseparationForce);
+      gui.add(WalignmentForce);
+      gui.add(WturnRate);
+      gui.add(WbRadius);
     }
   }
 };
 
 int main() {
   MyApp app;
+  //app.audioIO().deviceOut(AudioDevice("ECHO X5"));
   app.configureAudio(48000, 512, 2, 0);
   gam::sampleRate(app.audioIO().framesPerSecond());
   app.start();

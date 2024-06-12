@@ -165,8 +165,8 @@ public:
       mAmpEnv.lengths()[0] = rand_double(0.1, 0.03);
       mAmpEnv.lengths()[2] = rand_double(1.7, 0.05);
       mPan.pos(-1.0);
-      float amp = 0.0015; //rand_float(0.0015, 0.001);
-      float amRatio = rand_float(2.0, 0.3);
+      float amp = 0.0015;//rand_float(0.015, 0.01);
+      float amRatio = rand_float(2.0, 0.05);
       while (io()) {
         mAMValue = mAM();
         mAM.freq(mOsc.freq()*amRatio);            // set AM freq according to ratio
