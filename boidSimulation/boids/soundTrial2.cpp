@@ -21,10 +21,12 @@
 #include "al/sound/al_Dbap.hpp"
 #include "al/sound/al_StereoPanner.hpp"
 #include "al/sound/al_Vbap.hpp"
+#include "al/sound/al_Lbap.hpp"
 #include "al/ui/al_Parameter.hpp"
 #include "al/ui/al_PresetSequencer.hpp"
 #include "al_ext/statedistribution/al_CuttleboneDomain.hpp"
 #include "al_ext/statedistribution/al_CuttleboneStateSimulationDomain.hpp"
+#include "al/sphere/al_AlloSphereSpeakerLayout.hpp"
 
 #include "../utils/octree.cpp"
 #include <iostream>
@@ -140,12 +142,18 @@ struct CommonState {
 
 class MyAgent : public PositionedVoice {
 public:
-  gam::Osc<> mAM;
+  /* gam::Osc<> mAM;
   gam::ADSR<> mAMEnv;
   gam::Sine<> mOsc;
   gam::ADSR<> mAmpEnv;
   gam::EnvFollow<> mEnvFollow;
-  gam::Pan<> mPan;
+  gam::Pan<> mPan; */
+  gam::Sine<> mSource;   // Sine wave oscillator source
+  gam::Saw<> mModulator; // Saw wave modulator
+  gam::AD<> mEnvelope;
+
+  unsigned int mLifeSpan; // life span counter
+  float mModulatorValue;  // To share modulator value from audio to graphics
 
   unsigned int mLifeSpan; // life span counter
   float mAMValue;
@@ -153,15 +161,28 @@ public:
   vector<int> i_boids;
   Vec3d myPos;
   MyAgent() {
-    mAmpEnv.levels(0,1,1,0);
+    mEnvelope.lengths(5.0f, 5.0f);
+    mEnvelope.levels(0, 1, 0);
+    mEnvelope.sustainPoint(1);
+    mModulator.freq(1.9);
+    /* mAmpEnv.levels(0,1,1,0);
     mAmpEnv.lengths(5.0f, 5.0f);
     mAMEnv.curve(0);
     mAMEnv.levels(0,1,1,0);
-    mAMEnv.lengths(5.0f, 5.0f);
+    mAMEnv.lengths(5.0f, 5.0f); */
   }
 
   void onProcess(AudioIOData &io) override {
-    if (!isnan(mOsc.freq())){
+    while (io()) {
+      mModulatorValue = mModulator();
+      io.out(0) +=
+          mEnvelope() * mSource() * mModulatorValue * 0.05; // compute sample
+    }
+
+    if (mEnvelope.done()) {
+      free();
+    }
+    /* if (!isnan(mOsc.freq())){
       mAmpEnv.lengths()[0] = rand_double(0.1, 0.03);
       mAmpEnv.lengths()[2] = rand_double(1.7, 0.05);
       mPan.pos(-1.0);
@@ -188,30 +209,36 @@ public:
       if (mAmpEnv.done()){//    change this too
         free();
       }
-    }
+    } */
   }
 
   void onProcess(Graphics &g) override {
     // Get shared Mesh
     Mesh *sharedMesh = static_cast<Mesh *>(userData());
-    //mLifeSpan--;//   uncomment to have the voice decay over time
+    mLifeSpan--;
     if (mLifeSpan == 0) { // If it's time to die, start die off
-      mAmpEnv.release();
-      free();
+      mEnvelope.release();
     }
     g.pushMatrix();
     gl::polygonMode(GL_LINE);
     g.color(0.1, 0.9, 0.3);
-    g.scale((mSize * mAmpEnv.value() + mAMValue) * 0.1);
+    g.scale(mSize * mEnvelope.value() + mModulatorValue * 0.1);
     g.draw(*sharedMesh); // Draw the mesh
     g.popMatrix();
   }
 
   void set(float x, float y, float z, float size, float frequency,
            float lifeSpanFrames) {
-    setPose(Pose({x, y, z}));
+    /* setPose(Pose({x, y, z}));
     mSize = size;
     mOsc.freq(frequency);
+    mLifeSpan = lifeSpanFrames;
+    myPos.x = x;
+    myPos.y = y;
+    myPos.z = z; */
+    setPose(Pose({x, y, z}));
+    mSize = size;
+    mSource.freq(frequency);
     mLifeSpan = lifeSpanFrames;
     myPos.x = x;
     myPos.y = y;
@@ -223,7 +250,7 @@ public:
 
   virtual void onTriggerOn() override {
     // We want to reset the envelope:
-    mAMEnv.reset();
+    /* mAMEnv.reset();
     mAmpEnv.reset();
     mAM.phase(-0.1);
     switch (amFunc) {
@@ -231,7 +258,9 @@ public:
     case 1: mAM.source(tbSqr); break;
     case 2: mAM.source(tbPls); break;
     case 3: mAM.source(tbDin); break;
-    }
+    } */
+    mEnvelope.reset();
+    mModulator.phase(-0.1); // reset the phase
   }
 
   void updateFreq(vector<Boid>& boids){
@@ -496,8 +525,8 @@ struct MyApp : DistributedAppWithState<CommonState> {
     if (isPrimary()) {
       auto guiDomain = GUIDomain::enableGUI(defaultWindowDomain());
       auto &gui = guiDomain->newGUI();
-      auto speakers = StereoSpeakerLayout();
-      scene.setSpatializer<SpatializerType>(speakers);
+      auto speakers = AlloSphereSpeakerLayout();//StereoSpeakerLayout();
+      scene.setSpatializer<Lbap>(speakers);
       addDodecahedron(voiceMesh);
       scene.setDefaultUserData(&voiceMesh);
       gam::addWave(tbSin, gam::SINE);
@@ -523,8 +552,8 @@ struct MyApp : DistributedAppWithState<CommonState> {
 
 int main() {
   MyApp app;
-  app.configureAudio(48000, 512, 2, 0);
-  gam::sampleRate(app.audioIO().framesPerSecond());
+  //app.configureAudio(48000, 512, 2, 0);
+  //gam::sampleRate(app.audioIO().framesPerSecond());
   app.start();
 }
 
