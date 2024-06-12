@@ -32,7 +32,7 @@ using namespace al;
 
 // Choose the spatializer type here:
 
-#define SpatializerType StereoPanner
+// #define SpatializerType StereoPanner
 //#define SpatializerType Vbap
 //#define SpatializerType Dbap
 //#define SpatializerType AmbisonicsSpatializer
@@ -140,7 +140,7 @@ struct MyApp : public App {
     initSpatializer();
     // Configure spatializer for the scene
 
-    scene.setSpatializer<SpatializerType>(speakerLayout);
+    scene.setSpatializer<Lbap>(speakerLayout);
 
     // You can set how distance attenuattion for audio is handled
     //    scene.distanceAttenuation().law(ATTEN_NONE);
@@ -247,10 +247,12 @@ struct MyApp : public App {
 
 int main() {
   MyApp app;
-  app.dimensions(800, 600);
+  // app.dimensions(800, 600);
 
-  app.configureAudio(44100, 256, 2, 0);
-  gam::sampleRate(app.audioIO().framesPerSecond());
+  // app.configureAudio(44100, 256, 2, 0);
+  // app.configureAudio("ECHO X5", 44100, 512, 60, 60);
+
+  // gam::sampleRate(app.audioIO().framesPerSecond());
 
   app.start();
   return 0;
